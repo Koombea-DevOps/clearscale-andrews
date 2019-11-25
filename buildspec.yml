@@ -8,28 +8,25 @@ phases:
       docker: 18
     commands:
       - apt-get update -y
-      - echo ‘#!/bin/bash’ > /usr/local/bin/ok
-      - echo ‘if [[ “$CODEBUILD_BUILD_SUCCEEDING” == “0" ]]; then exit 1; else exit 0; fi’ >> /usr/local/bin/ok
-      - chmod +x /usr/local/bin/ok
-      - ok && wget https://releases.hashicorp.com/terraform/0.11.11/terraform_0.11.11_linux_amd64.zip
-      - ok && unzip terraform_0.11.11_linux_amd64.zip
-      - ok && mv terraform /usr/local/bin/
+      - wget https://releases.hashicorp.com/terraform/0.11.11/terraform_0.11.11_linux_amd64.zip
+      - unzip terraform_0.11.11_linux_amd64.zip
+      - mv terraform /usr/local/bin/
   pre_build:
     commands:
-      - ok && $(aws ecr get-login --no-include-email --region us-east-1)
-      - ok && date=$(date +%F-%s)
-      - ok && chmod 700 $CODEBUILD_SRC_DIR/entrypoint
+      - $(aws ecr get-login --no-include-email --region us-east-1)
+      - export current_date=$(date +%F-%s)
+      - chmod 700 $CODEBUILD_SRC_DIR/entrypoint
   build:
     commands:
-      - ok && docker pull $ECR_REPOSITORY\:latest || true
-      - ok && docker build --cache-from=$ECR_REPOSITORY\:latest -t myapp .
-      - ok && docker tag myapp:latest $ECR_REPOSITORY\:latest
-      - ok && docker tag myapp:latest $ECR_REPOSITORY\:$date
-      - ok && docker push $ECR_REPOSITORY\:latest
-      - ok && docker push $ECR_REPOSITORY\:$date
+      - docker pull $ECR_REPOSITORY\:latest || true
+      - docker build --cache-from=$ECR_REPOSITORY\:latest -t myapp .
+      - docker tag myapp:latest $ECR_REPOSITORY\:latest
+      - docker tag myapp:latest $ECR_REPOSITORY\:$current_date
+      - docker push $ECR_REPOSITORY\:latest
+      - docker push $ECR_REPOSITORY\:$current_date
   post_build:
     commands:
-      - ok && cd $CODEBUILD_SRC_DIR/terraform
-      - ok && terraform init && terraform workspace select $ENV
-      - ok && TF_VAR_docker_image=$date
-      - ok && terraform apply -target="aws_ecs_service.ecs_service" --auto-approve
+      - cd $CODEBUILD_SRC_DIR/terraform
+      - terraform init && terraform workspace select $ENV
+      - TF_VAR_docker_image=$current_date
+      - terraform apply -target="aws_ecs_service.ecs_service" --auto-approve
