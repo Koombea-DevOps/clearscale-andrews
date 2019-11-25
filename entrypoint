@@ -1,0 +1,5 @@
+#!/bin/sh
+SNS_TOPIC_ARN=$(aws ssm get-parameter --name "SNS_TOPIC_ARN" --region=us-east-1 | jq '.Parameter.Value')
+echo "SetEnv AWS_REGION=us-east-1" >> /etc/apache2/sites-available/000-default.conf
+echo "SetEnv SNS_TOPIC_ARN=${SNS_TOPIC_ARN}" >> /etc/apache2/sites-available/000-default.conf
+exec "$@"
