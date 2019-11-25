@@ -5,7 +5,7 @@ resource "aws_ecs_service" "ecs_service" {
   desired_count                      = 1
   iam_role                           = "${aws_iam_role.ecs_service_role.name}"
   health_check_grace_period_seconds  = 50
-  deployment_minimum_healthy_percent = 100
+  deployment_minimum_healthy_percent = 50
   depends_on                         = ["aws_lb_listener.http"]
 
   ordered_placement_strategy {

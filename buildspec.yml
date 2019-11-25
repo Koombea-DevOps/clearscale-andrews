@@ -12,6 +12,7 @@ phases:
       - mv terraform /usr/local/bin/
   pre_build:
     commands:
+      - rm -rf terraform_0.11.11_linux_amd64.zip
       - $(aws ecr get-login --no-include-email --region us-east-1)
       - export current_date=$(date +%F-%s)
   build:
