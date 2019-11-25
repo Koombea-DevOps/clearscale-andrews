@@ -1,8 +1,6 @@
 FROM ubuntu:16.04
 RUN apt-get update -y
-RUN apt-get install -y wget zip unzip php php7.0-xml apache2 python-pip
+RUN apt-get install -y jq wget zip unzip php php7.0-xml libapache2-mod-php apache2 python-pip
 RUN wget https://raw.githubusercontent.com/composer/getcomposer.org/6e5e46fc7cab0015d5961f54bb39be1f4b330093/web/installer -O - -q | php -- --quiet
 RUN ./composer.phar require aws/aws-sdk-php
 RUN pip install awscli
-RUN apt-get purge -y python-pip
-RUN apt-get install -y jq libapache2-mod-php
