@@ -27,6 +27,12 @@ EOF
   }
 }
 
+resource "aws_iam_policy_attachment" "ec2_instance_policy_attachment" {
+  name       = "${terraform.workspace}-${var.project_name}-instance-policy-attachment"
+  roles      = ["${aws_iam_role.ec2_instance_role.name}"]
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role"
+}
+
 resource "aws_iam_role" "ecs_service_role" {
   name = "${terraform.workspace}-${var.project_name}-ecs-service-role"
 
@@ -53,7 +59,7 @@ EOF
 
 resource "aws_iam_policy_attachment" "ecs_service_policy_attachment" {
   name       = "${terraform.workspace}-${var.project_name}-instance-policy-attachment"
-  roles      = ["${aws_iam_role.ec2_instance_role.name}"]
+  roles      = ["${aws_iam_role.ecs_service_role.name}"]
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceRole"
 }
 

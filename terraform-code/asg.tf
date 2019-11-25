@@ -1,5 +1,9 @@
 data "template_file" "user_data" {
   template = "${file("./user-data.sh")}"
+
+  vars {
+    ecs_cluster_name = "${terraform.workspace}-${var.project_name}"
+  }
 }
 
 resource "aws_launch_configuration" "launch_configuration" {
