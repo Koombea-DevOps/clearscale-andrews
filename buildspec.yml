@@ -1,0 +1,33 @@
+version: 0.2
+env:
+  variables:
+    ENV: staging
+phases:
+  install:
+    commands:
+      - apt-get update -y
+      - echo ‘#!/bin/bash’ > /usr/local/bin/ok
+      - echo ‘if [[ “$CODEBUILD_BUILD_SUCCEEDING” == “0" ]]; then exit 1; else exit 0; fi’ >> /usr/local/bin/ok
+      - chmod +x /usr/local/bin/ok
+      - ok && wget https://releases.hashicorp.com/terraform/0.11.11/terraform_0.11.11_linux_amd64.zip
+      - ok && unzip terraform_0.11.11_linux_amd64.zip
+      - ok && mv terraform /usr/local/bin/
+  pre_build:
+    commands:
+      - ok && $(aws ecr get-login --no-include-email --region us-east-1)
+      - ok && date=$(date +%F-%s)
+      - ok && chmod 700 $CODEBUILD_SRC_DIR/entrypoint
+  build:
+    commands:
+      - ok && docker pull $ECR_REPOSITORY\:latest || true
+      - ok && docker build --cache-from=$ECR_REPOSITORY\:latest -t myapp .
+      - ok && docker tag myapp:latest $ECR_REPOSITORY\:latest
+      - ok && docker tag myapp:latest $ECR_REPOSITORY\:$date
+      - ok && docker push $ECR_REPOSITORY\:latest
+      - ok && docker push $ECR_REPOSITORY\:$date
+  post_build:
+    commands:
+      - ok && cd $CODEBUILD_SRC_DIR/terraform
+      - ok && terraform init && terraform workspace select $ENV
+      - ok && TF_VAR_docker_image=$date
+      - ok && terraform apply -target="aws_ecs_service.ecs_service" --auto-approve
