@@ -1,3 +1,8 @@
+<?php
+echo "AWS_REGION: ".getenv('AWS_REGION');
+echo "SNS_TOPIC_ARN: ".getenv('SNS_TOPIC_TOPIC');
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
