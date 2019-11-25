@@ -4,6 +4,8 @@ env:
     ENV: staging
 phases:
   install:
+    runtime-versions:
+      docker: 18
     commands:
       - apt-get update -y
       - echo ‘#!/bin/bash’ > /usr/local/bin/ok
