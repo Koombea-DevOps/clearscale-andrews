@@ -1,7 +1,7 @@
 <?php
 
 // Enable AWS SDK for PHP
-require '/var/www/html/vendor/autoload.php';
+require '/vendor/autoload.php';
 // Load libraries
 use Aws\Sns\SnsClient;
 use Aws\Exception\AwsException;

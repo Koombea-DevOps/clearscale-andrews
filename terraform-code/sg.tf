@@ -43,3 +43,26 @@ resource "aws_security_group" "http" {
     Name = "${terraform.workspace}-${var.project_name}-HTTP"
   }
 }
+
+resource "aws_security_group" "internal" {
+  name   = "${terraform.workspace}-${var.project_name}-internal"
+  vpc_id = "${aws_vpc.main.id}"
+
+  ingress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["${var.vpc_cidr_block}"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags {
+    Name = "${terraform.workspace}-${var.project_name}-internal"
+  }
+}

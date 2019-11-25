@@ -14,7 +14,7 @@ resource "aws_launch_configuration" "launch_configuration" {
   key_name             = "andrews.herrera"
   iam_instance_profile = "${aws_iam_instance_profile.ec2_instance_profile.name}"
   enable_monitoring    = "true"
-  security_groups      = ["${aws_security_group.ssh.id}", "${aws_security_group.http.id}"]
+  security_groups      = ["${aws_security_group.internal.id}", "${aws_security_group.ssh.id}", "${aws_security_group.http.id}"]
 
   root_block_device {
     volume_type = "gp2"

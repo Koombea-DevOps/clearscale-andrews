@@ -14,7 +14,6 @@ phases:
     commands:
       - $(aws ecr get-login --no-include-email --region us-east-1)
       - export current_date=$(date +%F-%s)
-      - chmod 700 $CODEBUILD_SRC_DIR/entrypoint
   build:
     commands:
       - docker pull $ECR_REPOSITORY\:latest || true
