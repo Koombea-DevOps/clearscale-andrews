@@ -16,7 +16,7 @@ $SnSclient = new SnsClient([
 $message = $_POST['body'];
 
 // SNS topic
-$topic = getenv('SNS_TOPIC_TOPIC');
+$topic = getenv('SNS_TOPIC_ARN');
 
 // Send message to the defined topic
 try {
