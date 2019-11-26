@@ -8,3 +8,4 @@ RUN apt-get purge -y unzip zip unzip python-pip
 RUN ln -sf /dev/stdout /var/log/apache2/access.log
 RUN ln -sf /dev/stderr /var/log/apache2/error.log
 RUN ln -sf /dev/stdout /var/log/apache2/other_vhosts_access.log
+RUN rm -rf /var/www/html/*

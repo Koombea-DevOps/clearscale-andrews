@@ -14,18 +14,18 @@ phases:
     commands:
       - rm -rf terraform_0.11.11_linux_amd64.zip
       - $(aws ecr get-login --no-include-email --region us-east-1)
-      - export current_date=$(date +%F-%s)
+      - export DOCKER_IMAGE=$ENV-$CODEBUILD_BUILD_NUMBER
   build:
     commands:
       - docker pull $ECR_REPOSITORY\:latest || true
       - docker build --cache-from=$ECR_REPOSITORY\:latest -t myapp .
       - docker tag myapp:latest $ECR_REPOSITORY\:latest
-      - docker tag myapp:latest $ECR_REPOSITORY\:$current_date
+      - docker tag myapp:latest $ECR_REPOSITORY\:$DOCKER_IMAGE
       - docker push $ECR_REPOSITORY\:latest
-      - docker push $ECR_REPOSITORY\:$current_date
+      - docker push $ECR_REPOSITORY\:$DOCKER_IMAGE
   post_build:
     commands:
       - cd $CODEBUILD_SRC_DIR/terraform-code
       - terraform init && terraform workspace select $ENV
-      - TF_VAR_docker_image=$current_date
+      - TF_VAR_docker_image=$DOCKER_IMAGE
       - terraform apply -target="aws_ecs_service.ecs_service" --auto-approve
