@@ -1,5 +1,18 @@
 #!/bin/sh
-SNS_TOPIC_ARN=$(aws ssm get-parameter --name "SNS_TOPIC_ARN" --region=us-east-1 | jq '.Parameter.Value' | sed 's/"//g')
-echo "SetEnv AWS_REGION us-east-1" >> /etc/apache2/sites-available/000-default.conf
-echo "SetEnv SNS_TOPIC_ARN $SNS_TOPIC_ARN" >> /etc/apache2/sites-available/000-default.conf
+
+export AWS_DEFAULT_REGION=us-east-1
+export AWS_ACCESS_KEY_ID=XXX
+export AWS_SECRET_ACCESS_KEY=XXXX
+
+aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID} && \
+aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY} && \
+aws configure set default.region ${AWS_DEFAULT_REGION}
+
+
+whoami
+
+echo "!!!!!"
+mv ~/.aws /var/www/html/
+chmod -R 777 /var/www/html/.aws
+
 exec "$@"
